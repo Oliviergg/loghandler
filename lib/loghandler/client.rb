@@ -13,12 +13,6 @@ class Loghandler::Client < EM::Connection
     ensure
       Socket.do_not_reverse_lookup = orig
   end
-
-
-  def report_data(tailer,data)
-    to_send={content:data}.merge(@@options)
-    send_data to_send.to_json
-  end
   
   def self.run(options)
     EM.run do
@@ -26,8 +20,13 @@ class Loghandler::Client < EM::Connection
         EM.stop
       end
       @@options = options
+      channel = EventMachine::Channel.new
+      channel.subscribe do |data|
+          to_send={content:data}.merge(@@options)
+          send_data to_send.to_json
+      end
       client = EventMachine.connect options[:url], options[:port], Loghandler::Client
-      Loghandler::Tailer.new(options,client)
+      Loghandler::Tailer.new(options,channel)
     end
   end
 end
