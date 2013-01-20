@@ -17,4 +17,10 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
   gem.add_dependency('eventmachine', '>= 1.0.0')
+  
+  
+  gem.bindir = "bin"
+  gem.executables << "loghandler_client"
+  gem.executables << "loghandler_server"
+  
 end

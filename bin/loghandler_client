@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+require "rubygems"
+
+require "loghandler"
+require "optparse"
+require "pry"
+
+def main(args)
+  filename = ""
+  log_type = ""
+  
+  url = "127.0.0.1"
+  port = 9526
+  
+  opts = OptionParser.new do |opt|
+    opt.banner = "loghandler client"
+    opt.on("-f FILENAME","--filename FILENAME") do |v|
+      filename=v
+    end
+    opt.on("-u URL","--url URL") do |v|
+      url=v
+    end
+    opt.on("-p PORT","--port PORT") do |v|
+      port=v
+    end
+    opt.on("-t LOG_TYPE","--log_type LOG_TYPE") do |v|
+      log_type=v
+    end
+
+  end
+  opts.parse!(args)
+  Loghandler::Client.run(file:filename,log_type:log_type,url:url,port:port)
+  return 0
+end
+
+
+exit(main(ARGV))
