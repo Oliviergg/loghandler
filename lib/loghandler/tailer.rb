@@ -1,7 +1,7 @@
 class Loghandler::Tailer < EventMachine::FileTail
   def initialize(options,channel)
     @options = options
-    @channel = connection
+    @channel = channel
     super(options[:file])
   end
 
