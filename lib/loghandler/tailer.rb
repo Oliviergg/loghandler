@@ -1,12 +1,12 @@
 class Loghandler::Tailer < EventMachine::FileTail
-  def initialize(file,connection)
-    super(file)
+  def initialize(options,connection)
+    @options = options
     @connection = connection
+    super(options[:file])
   end
 
   def receive_data(data)
-    puts "client (#{@path}) #{data}"
-    @connection.send_data data
+    @connection.report_data self,data
   end
 
 end
