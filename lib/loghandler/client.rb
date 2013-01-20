@@ -21,11 +21,11 @@ class Loghandler::Client < EM::Connection
       end
       @@options = options
       channel = EventMachine::Channel.new
+      client = EventMachine.connect options[:url], options[:port], Loghandler::Client
       channel.subscribe do |data|
           to_send={content:data}.merge(@@options)
-          send_data to_send.to_json
+          client.send_data to_send.to_json
       end
-      client = EventMachine.connect options[:url], options[:port], Loghandler::Client
       Loghandler::Tailer.new(options,channel)
     end
   end
