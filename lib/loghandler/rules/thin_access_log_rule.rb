@@ -12,7 +12,7 @@ module Loghandler
       end
       def apply!
         log_detail = {}
-        tmp = CSV.parse(@log_detail,col_sep:" ")
+        tmp = CSV.parse(@log_detail[:content],col_sep:" ")
         tmp = tmp[0]
         log_detail[:ip] = tmp[0]
         log_detail[:date] = tmp[3]+tmp[4]
