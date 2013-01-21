@@ -1,5 +1,5 @@
 class Loghandler::Server < EM::Connection
-
+  
   include MongoMapper
 
   MongoMapper.connection = Mongo::Connection.new()
@@ -8,15 +8,23 @@ class Loghandler::Server < EM::Connection
   def post_init
     @rules=Loghandler::Rules.constants.select {|c| Class === Loghandler::Rules.const_get(c)}
     @rules.delete(:AbstractRule)
+
   end
 
-  def apply_rule(log_detail)
+  def apply_rules(log_detail)
+    matching_rules = []
     @rules.each do |rule_name|
-      rule = Loghandler::Rules.const_get(rule_name)
-      inst = rule.new(log_detail)
-      return inst.convert if inst.match?
-      return log_detail
+      rule_class = Loghandler::Rules.const_get(rule_name)
+      rule = rule_class.new(log_detail)
+      matching_rules << rule if rule.match?
     end
+
+    # Run rules
+    matching_rules.each do |rule|
+      puts "logging: #{rule.log}" if !rule.log.nil?
+      @@ws_channel.push(rule.log) if rule.showable?
+    end
+    
   end
   
   def receive_data(rawdata)
@@ -25,28 +33,30 @@ class Loghandler::Server < EM::Connection
       data = Hash[data.map{|(k,v)| [k.to_sym,v]}]
       data[:content].strip!
       
-      data =  apply_rule(data)
-      if data[:converted]
-        puts data
-      end
+      apply_rules(data)
     end
     # rescue => e
     #   puts "Error #{e} while trying to treat #{rawdata}"  
   end
+  def toto
+    puts "toto"
+  end
 
   def self.run(options)
     EM.run do
+      @@ws_channel = EventMachine::Channel.new
+
       Signal.trap("INT") do
         EM.stop
       end
-      EventMachine.start_server(options[:url], options[:port], Loghandler::Server)
+      EventMachine.start_server options[:url], options[:port], Loghandler::Server 
       
       EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 8080) do |ws|
+          @@ws_channel.subscribe do |msg|
+            ws.send msg
+          end
           ws.onopen {
             puts "WebSocket connection open"
-      
-            # publish message to the client
-            ws.send "Hello Client"
           }
       
           ws.onclose { puts "Connection closed" }
@@ -56,7 +66,7 @@ class Loghandler::Server < EM::Connection
           }
       end
       
-     end
+   end # EM
   end
 
 end
