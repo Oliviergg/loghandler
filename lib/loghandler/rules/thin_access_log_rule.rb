@@ -10,7 +10,7 @@ module Loghandler
         # return true if (@log_detail[:content].match(/RTL2/))
         return false
       end
-      def convert
+      def apply!
         log_detail = {}
         tmp = CSV.parse(@log_detail,col_sep:" ")
         tmp = tmp[0]

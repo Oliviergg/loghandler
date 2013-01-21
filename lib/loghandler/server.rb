@@ -21,6 +21,7 @@ class Loghandler::Server < EM::Connection
 
     # Run rules
     matching_rules.each do |rule|
+      rule.apply!
       puts "logging: #{rule.log}" if !rule.log.nil?
       @@ws_channel.push(rule.log) if rule.showable?
     end

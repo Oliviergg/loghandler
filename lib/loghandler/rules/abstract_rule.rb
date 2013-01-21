@@ -7,7 +7,7 @@ module Loghandler
       def match?
         raise "match? is abstract. Provide an implementation"
       end
-      def convert
+      def apply!
         raise "convert is abstract. Provide an implementation"
       end
       def log
