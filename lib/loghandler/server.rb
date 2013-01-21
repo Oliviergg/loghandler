@@ -1,3 +1,4 @@
+require 'csv'
 class Loghandler::Server < EM::Connection
   
   include MongoMapper
