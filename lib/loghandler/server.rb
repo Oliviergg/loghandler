@@ -5,6 +5,10 @@ class Loghandler::Server < EM::Connection
   
   include MongoMapper
 
+  def initialize(ws_channel)
+    @ws_channel = ws_channel
+    super
+  end
 
   def post_init
     @rules=Loghandler::Rules.constants.select {|c| Class === Loghandler::Rules.const_get(c)}
@@ -28,7 +32,7 @@ class Loghandler::Server < EM::Connection
     detect_matching_rules(log_detail).each do |rule|
       rule.apply!
       # puts "logging: #{rule.log}" if !rule.loggable?
-      @@ws_channel.push(rule.log) if rule.loggable?
+      @ws_channel.push(rule.log) if rule.loggable?
     end
     
   end
@@ -59,20 +63,18 @@ class Loghandler::Server < EM::Connection
     MongoMapper.database = "loghandler"
 
     EM.run do
-      @@ws_channel = EventMachine::Channel.new
-
+      ws_channel = EventMachine::Channel.new
       Signal.trap("INT") do
         EM.stop
       end
-      EventMachine.start_server options[:url], options[:port], Loghandler::Server 
+      EventMachine.start_server options[:url], options[:port], Loghandler::Server, ws_channel
       
       EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 8080) do |ws|
-          @@ws_channel.subscribe do |msg|
-            ws.send msg
+          ws.onopen do
+            ws_channel.subscribe do |msg|
+              ws.send msg 
+            end
           end
-          # ws.onopen {
-          #   puts "WebSocket connection open"
-          # }
           # ws.onclose { puts "Connection closed" }
           # ws.onmessage { |msg|
           #   puts "Recieved message: #{msg}"
