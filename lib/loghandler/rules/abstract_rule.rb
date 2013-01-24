@@ -10,13 +10,10 @@ module Loghandler
       def apply!
         raise "convert is abstract. Provide an implementation"
       end
-      def log
-        return nil
+      def loggable?
+        true
       end
-      def show
-        false
-      end
-      def persist
+      def persist?
         raise "persist is abstract. Provide an implementation"
       end
     end

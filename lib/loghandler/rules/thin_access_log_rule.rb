@@ -6,7 +6,7 @@ module Loghandler
         @log_detail=log_detail
       end
       def match?
-        return true if (@log_detail[:log_type] ="thin_access_log")
+        return true if "thin_access_log"==@log_detail[:log_type]
         # return true if (@log_detail[:content].match(/RTL2/))
         return false
       end
@@ -26,16 +26,16 @@ module Loghandler
         @log_detail.merge!(log_detail)
       end
       def log
-        @log_detail.to_json
+       @log_detail.to_json
+      end
+      def loggable?
+        true
       end
       def persist?
         false
       end
       def showable?
         true
-      end
-      def to_show
-        @log_detail.to_json
       end
     end
 

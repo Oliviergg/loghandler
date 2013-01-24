@@ -1,20 +1,22 @@
 module Loghandler
   module Rules
 
-    class OnRadioLogRule < AbstractRule
+    class GenericLogRule < AbstractRule
       def initialize(log_detail)
         @log_detail=log_detail
       end
       def match?
-        # return true if (filename == "./log/access.log")
-        return true if (@log_detail[:content].match(/Nouveau scan de page/))
+        return true if "generic_log" == @log_detail[:log_type]
+        # return true if (@log_detail[:content].match(/RTL2/))
         return false
       end
       def apply!
-        @log_detail.merge!({converted:true})
       end
       def log
-        @log_detail.to_json
+       @log_detail.to_json
+      end
+      def loggable?
+        true
       end
       def persist?
         false
@@ -23,5 +25,6 @@ module Loghandler
         true
       end
     end
+
   end
 end
