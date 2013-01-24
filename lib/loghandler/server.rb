@@ -1,10 +1,10 @@
 require 'csv'
+require 'mongo_mapper'
+
 class Loghandler::Server < EM::Connection
   
   include MongoMapper
 
-  MongoMapper.connection = Mongo::Connection.new()
-  MongoMapper.database = "loghandler"
 
   def post_init
     @rules=Loghandler::Rules.constants.select {|c| Class === Loghandler::Rules.const_get(c)}
@@ -55,6 +55,9 @@ class Loghandler::Server < EM::Connection
   end
 
   def self.run(options)
+    MongoMapper.connection = Mongo::Connection.new()
+    MongoMapper.database = "loghandler"
+
     EM.run do
       @@ws_channel = EventMachine::Channel.new
 

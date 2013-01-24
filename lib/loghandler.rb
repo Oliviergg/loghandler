@@ -3,7 +3,6 @@ require 'em-websocket'
 require 'eventmachine-tail'
 require 'socket'
 require 'json'
-require 'mongo_mapper'
 
 require "loghandler/version"
 require "loghandler/tailer"
