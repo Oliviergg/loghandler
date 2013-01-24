@@ -7,7 +7,9 @@ class Loghandler::Tailer < EventMachine::FileTail
 
   def receive_data(data)
     data.each_line do |line|
-      @channel.push line
+      line.split("\n").each do |sline|
+        @channel.push sline
+      end
     end
   end
 
