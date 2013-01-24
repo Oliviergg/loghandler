@@ -5,11 +5,6 @@ module Loghandler
       def initialize(log_detail)
         @log_detail=log_detail
       end
-      def match?
-        return true if "thin_access_log"==@log_detail[:log_type]
-        # return true if (@log_detail[:content].match(/RTL2/))
-        return false
-      end
       def apply!
         log_detail = {}
         tmp = CSV.parse(@log_detail[:content],col_sep:" ")
@@ -17,13 +12,19 @@ module Loghandler
         log_detail[:ip] = tmp[0]
         log_detail[:date] = tmp[3]+tmp[4]
         log_detail[:url]=tmp[5]
-        log_detail[:status]=tmp[6]
-        log_detail[:length]=tmp[7]
+        log_detail[:status]=tmp[6].to_i
+        log_detail[:length]=tmp[7].to_i
         log_detail[:referer]=tmp[8]
         log_detail[:user_agent]=tmp[9]
         #p  [log_detail[:url],log_detail[:status]]
-
         @log_detail.merge!(log_detail)
+        if @log_detail[:status]>=500
+          @log_detail[:severity]="error"
+        elsif @log_detail[:status]>=400
+          @log_detail[:severity]="warning"
+        else
+          @log_detail[:severity]="none"
+        end
       end
       def log
        @log_detail.to_json

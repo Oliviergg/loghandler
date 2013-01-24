@@ -1,11 +1,12 @@
 module Loghandler
   module Rules
 
-    class GenericLogRule < AbstractRule
+    class GenericErrorLogRule < AbstractRule
       def initialize(log_detail)
         @log_detail=log_detail
       end
       def apply!
+        @log_detail[:severity]="error"
       end
       def log
        @log_detail.to_json

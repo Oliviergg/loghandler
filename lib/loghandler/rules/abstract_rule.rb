@@ -5,7 +5,8 @@ module Loghandler
         raise "initialize is abstract. Provide an implementation"
       end
       def match?
-        raise "match? is abstract. Provide an implementation"
+        return true if self.class.name.underscore == ["loghandler/rules/",@log_detail[:log_type], "_rule"].join
+        return false
       end
       def apply!
         raise "convert is abstract. Provide an implementation"
