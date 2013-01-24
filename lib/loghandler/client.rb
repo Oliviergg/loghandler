@@ -1,4 +1,4 @@
-require 'SecureRandom'
+require 'securerandom'
 class Loghandler::Client < EM::Connection
   def initialize(args)
     super
