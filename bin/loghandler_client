@@ -38,7 +38,7 @@ def main(args)
 
   end
   opts.parse!(args)
-  Loghandler::Client.run(url:url,port:port,file:filename,log_type:log_type,node_name:node_name,uid:uid)
+  Loghandler::Client.run(url:url,port:port.to_i,file:filename,log_type:log_type,node_name:node_name,uid:uid)
   return 0
 end
 

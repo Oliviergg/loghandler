@@ -41,7 +41,7 @@ class Loghandler::Client < EM::Connection
       options.merge!({uid:SecureRandom.hex(10)}) if options[:uid].nil?
       channel = EventMachine::Channel.new
       
-      client = EventMachine.connect options[:url], options[:port], Loghandler::Client, options
+      client = EventMachine.connect options[:url], options[:port].to_i, Loghandler::Client, options
       # TODO : move into Loghandler::Client
       channel.subscribe do |data|
           to_send={content:data,logged_at:Time.now}.merge(options)
