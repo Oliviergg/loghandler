@@ -6,11 +6,13 @@ require "optparse"
 require "pry"
 
 def main(args)
-  filename = ""
-  log_type = ""
   
   url = "127.0.0.1"
   port = 9526
+  filename = nil
+  log_type = nil
+  node_name = nil  
+  uid = nil
   
   opts = OptionParser.new do |opt|
     opt.banner = "loghandler client"
@@ -26,10 +28,17 @@ def main(args)
     opt.on("-t LOG_TYPE","--log_type LOG_TYPE") do |v|
       log_type=v
     end
+    opt.on("-n NODE_NAME","--node NODE_NAME") do |v|
+      node_name=v
+    end
+    opt.on("--uid ID") do |v|
+      uid=v
+    end
+
 
   end
   opts.parse!(args)
-  Loghandler::Client.run(file:filename,log_type:log_type,url:url,port:port)
+  Loghandler::Client.run(url:url,port:port,file:filename,log_type:log_type,node_name:node_name,uid:uid)
   return 0
 end
 
